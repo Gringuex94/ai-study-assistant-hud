@@ -9,7 +9,7 @@
 
 > Ventana flotante para Windows que mira un cuestionario de opción múltiple en tu pantalla y te marca la opción correcta con un botón.
 
-**[Visita guiada del proyecto](https://Gringuex94RIO.github.io/ai-study-assistant-hud/)**: qué es, cómo se usa y cómo está hecho.
+**[Visita guiada del proyecto](https://gringuex94.github.io/ai-study-assistant-hud/)**: qué es, cómo se usa y cómo está hecho.
 
 <!-- Cuando tengas una captura o un GIF, guardalo en assets/ y descomentá la línea de abajo -->
 <!-- ![Demo](assets/demo.gif) -->
