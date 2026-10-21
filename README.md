@@ -93,8 +93,17 @@ Los nombres de los modelos están en la lista `MODELS` de `asistente.py`; si Goo
 - Empaquetar como `.exe`.
 - Exportar el historial para repasar.
 
+- ## Contacto
+
+Si te interesa el proyecto o querés conversar sobre una oportunidad, escribime:
+
+- **Nombre:** Javier Antonio Rodriguez
+- **Ubicación:** Córdoba Capital, Argentina
+- **Correo:** [Gringuex94@gmail.com](mailto:Gringuex94@gmail.com)
+- **GitHub:** [@Gringuex94](https://github.com/Gringuex94)
+
 ## Licencia
 
 Todos los derechos reservados. El código se publica con fines de portafolio y evaluación: podés leerlo y ejecutarlo localmente para probarlo. Para copiarlo, modificarlo, distribuirlo o usarlo comercialmente se necesita permiso escrito del autor. Ver [LICENSE](LICENSE).
 
-Si te interesa colaborar o tenés una propuesta, escribime.
+
