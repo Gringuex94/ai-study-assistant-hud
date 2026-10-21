@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Javier Antonio Rodriguez. All rights reserved.
+# Código publicado solo para portafolio y evaluación. Ver el archivo LICENSE.
+
 import io
 import os
 import re

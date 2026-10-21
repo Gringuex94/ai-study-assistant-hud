@@ -57,7 +57,7 @@ Ventana HUD (CustomTkinter) <── Parseo de la respuesta (regex) <────
 Requiere Windows y Python. Probado en Windows 11 con Python 3.14.
 
 ```powershell
-git clone https://github.com/Gringuex94RIO/ai-study-assistant-hud.git
+git clone https://github.com/Gringuex94/ai-study-assistant-hud.git
 cd ai-study-assistant-hud
 python -m venv .venv
 .venv\Scripts\activate
