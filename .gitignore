@@ -1,0 +1,12 @@
+# Secretos: NUNCA subir
+.env
+
+# Entornos y cachés de Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Editor y logs
+.vscode/
+*.log

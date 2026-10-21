@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Study Assistant HUD · Visita guiada</title>
+<style>
+:root{--bg:#edf1f5;--surface:#fff;--ink:#101828;--muted:#52607a;--line:#cbd5e1;--accent:#0f766e;--hud:#0f172a;--hudtext:#e2e8f0;--ok:#34d399;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--surface:#121b2e;--ink:#e6ebf5;--muted:#9aa8c2;--line:#25324d;--accent:#5eead4;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Segoe UI Variable","Segoe UI",system-ui,sans-serif;background-color:var(--bg)}
+main{max-width:820px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 20px 48px}
+h1{font:800 clamp(1.9rem,5vw,2.9rem)/1.1 "Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;letter-spacing:-.03em;margin:.2em 0 .4em;max-width:18em}
+.lead{color:var(--muted);font-size:1.1rem;max-width:36em;margin:0 0 28px}
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.quiz{padding:20px}
+.quiz p{margin:0 0 12px;font-weight:600}
+.opt{display:flex;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;font-size:.95rem}
+.opt b{width:1.4em;color:var(--muted)}
+.opt.hit{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.hud{background:var(--hud);color:var(--hudtext);padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;min-height:260px}
+#st{font-size:.85rem;font-style:italic;color:#94a3b8;min-height:2.6em}
+#ans{font-size:2.6rem;font-weight:800;color:var(--ok);letter-spacing:.02em}
+button{font:inherit;cursor:pointer}
+.f8{background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:8px 18px;font-weight:600}
+.f8:disabled{opacity:.6;cursor:progress}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.note{font-size:.85rem;color:var(--muted);margin:8px 0 0}
+h2{font-size:1.5rem;letter-spacing:-.02em;margin:44px 0 14px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tabs button{background:none;border:1px solid transparent;color:var(--muted);border-radius:8px;padding:6px 12px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--line);background:var(--surface);font-weight:600}
+.panel{padding:18px 2px 6px;min-height:240px}
+.panel h3{margin:0 0 8px;font-size:1.2rem}
+.panel p{margin:0 0 12px;max-width:38em}
+.keys{display:grid;gap:10px;margin:14px 0 0;padding:0}
+.keys div{display:flex;gap:14px;align-items:baseline}
+kbd{font:600 .85rem ui-monospace,Consolas,monospace;border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;padding:2px 9px;background:var(--surface);min-width:3em;text-align:center;white-space:nowrap}
+ol.flow{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:0;counter-reset:s}
+ol.flow li{counter-increment:s;position:relative;padding:4px 0 14px 38px;border-left:2px solid var(--line);margin-left:12px}
+ol.flow li::before{content:counter(s);position:absolute;left:-14px;top:0;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--bg);font-weight:700;font-size:.85rem;display:grid;place-items:center}
+ol.flow li:last-child{border-left-color:transparent}
+ol.flow small{display:block;color:var(--muted)}
+ul{padding-left:1.2em;max-width:38em}
+li{margin-bottom:6px}
+.nav{display:flex;justify-content:space-between;margin-top:18px}
+.nav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 16px}
+.cta{display:inline-block;margin-top:36px;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:700;border-radius:10px;padding:10px 20px}
+code{font:.9em ui-monospace,Consolas,monospace;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+@media (max-width:620px){.demo{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.opt{transition:border-color .2s}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Un asistente que mira tu cuestionario y te marca la opción correcta</h1>
+<p class="lead">Dejás el quiz en pantalla, tocás Inicio y una ventana flotante te muestra la respuesta de cada pregunta visible. Hecho en Python para practicar y autoevaluarte.</p>
+</header>
+
+<section class="demo" aria-label="Demostración simulada">
+<div class="quiz">
+<p>¿Qué estructura de Python es inmutable?</p>
+<div class="opt" data-k="A"><b>A</b>Lista</div>
+<div class="opt" data-k="B"><b>B</b>Tupla</div>
+<div class="opt" data-k="C"><b>C</b>Diccionario</div>
+<div class="opt" data-k="D"><b>D</b>Conjunto (set)</div>
+</div>
+<div class="hud">
+<div id="st">Probá la ventana flotante: tocá Inicio</div>
+<div id="ans">--</div>
+<button class="f8" id="f8" type="button">Inicio</button>
+</div>
+</section>
+<p class="note">Es una simulación: esta página no llama a ninguna API.</p>
+
+<h2>Visita guiada</h2>
+<div class="tabs" role="tablist" aria-label="Pasos de la visita">
+<button role="tab" id="t0" aria-controls="p0" aria-selected="true">1. Qué es</button>
+<button role="tab" id="t1" aria-controls="p1" aria-selected="false" tabindex="-1">2. Cómo se usa</button>
+<button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">3. Por dentro</button>
+<button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">4. Decisiones técnicas</button>
+<button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">5. Seguridad</button>
+</div>
+
+<div class="panel" role="tabpanel" id="p0" aria-labelledby="t0">
+<h3>Una ventana flotante que corrige mientras practicás</h3>
+<p>Es una aplicación de escritorio para Windows hecha en Python con CustomTkinter. Ve la pantalla como la ves vos, entiende la pregunta con un modelo de visión y te devuelve la opción correcta en letras grandes.</p>
+<p>Cada captura se guarda en un historial, así podés repasar al final qué respondió para cada una.</p>
+</div>
+
+<div class="panel" role="tabpanel" id="p1" aria-labelledby="t1" hidden>
+<h3>Dos botones y una zona</h3>
+<p>Elegís qué parte de la pantalla mirar (la mitad izquierda o la pantalla completa) y tocás un botón.</p>
+<div class="keys">
+<div><kbd>Inicio</kbd><span>Modo rápido. Captura la zona elegida y marca la opción de cada pregunta visible.</span></div>
+<div><kbd>Avanzado</kbd><span>Más razonamiento: más lento, pensado para preguntas difíciles. Si no está disponible, usa Inicio.</span></div>
+<div><kbd>Explicación</kbd><span>Se muestra u oculta con un botón y solo se genera si la pedís.</span></div>
+</div>
+</div>
+
+<div class="panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+<h3>El recorrido de una captura</h3>
+<ol class="flow">
+<li>Botón o atajo<small>Inicio, Avanzado, o los atajos F8 y F10 con la librería <code>keyboard</code>.</small></li>
+<li>Captura de pantalla<small><code>mss</code> toma la zona elegida del monitor.</small></li>
+<li>Imagen en memoria<small>Se comprime a JPEG con <code>BytesIO</code>, sin archivos temporales.</small></li>
+<li>Modelo de visión<small>La API de Gemini lee las preguntas y responde con un formato fijo.</small></li>
+<li>Parseo y pantalla<small>Una expresión regular extrae las letras y el HUD las muestra.</small></li>
+</ol>
+</div>
+
+<div class="panel" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+<h3>Qué hay que resolver para que se sienta ágil</h3>
+<ul>
+<li><b>La ventana no se congela.</b> La consulta a la nube corre en un hilo aparte y la interfaz se actualiza desde el hilo principal.</li>
+<li><b>La API a veces se satura.</b> Ante un error 503 o 429 pasa enseguida al siguiente modelo y deja al saturado en pausa 5 minutos.</li>
+<li><b>Velocidad o precisión.</b> El modo rápido reduce el razonamiento del modelo; el cuidadoso lo amplía.</li>
+<li><b>Menos texto, menos espera.</b> La explicación se pide aparte, reutilizando la imagen guardada.</li>
+</ul>
+</div>
+
+<div class="panel" role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+<h3>Qué se envía y cómo se cuida</h3>
+<ul>
+<li>La clave de API vive en un archivo <code>.env</code> que no se sube al repositorio.</li>
+<li>Se envía a la API de Gemini la zona elegida (por defecto, la mitad izquierda). Con pantalla completa se envía todo lo visible: no captures datos personales.</li>
+<li>Los atajos globales se limitan a tres teclas y la app no registra lo que escribís.</li>
+<li>Está pensado para estudiar y practicar, no para evaluaciones donde la ayuda externa esté prohibida.</li>
+</ul>
+</div>
+
+<div class="nav">
+<button type="button" id="prev">Anterior</button>
+<button type="button" id="next">Siguiente</button>
+</div>
+
+<a class="cta" href="https://github.com/Gringuex94RIO/ai-study-assistant-hud">Ver el código en GitHub</a>
+</main>
+
+<script>
+(function(){
+  var btn=document.getElementById('f8'),out=document.getElementById('ans'),st=document.getElementById('st');
+  function demo(){
+    if(btn.disabled)return;
+    btn.disabled=true;
+    out.textContent='--';
+    st.textContent='Capturando y resolviendo…';
+    document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('hit')});
+    setTimeout(function(){
+      out.textContent='1→B';
+      st.textContent='Listo. Tocá Inicio para la siguiente.';
+      document.querySelector('[data-k="B"]').classList.add('hit');
+      btn.disabled=false;
+    },1100);
+  }
+  btn.addEventListener('click',demo);
+
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('[role=tab]'));
+  var panels=Array.prototype.slice.call(document.querySelectorAll('[role=tabpanel]'));
+  var i=0;
+  function go(n){
+    i=(n+tabs.length)%tabs.length;
+    tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});
+    panels.forEach(function(p,k){p.hidden=k!==i});
+  }
+  tabs.forEach(function(t,k){t.addEventListener('click',function(){go(k)})});
+  document.getElementById('prev').addEventListener('click',function(){go(i-1)});
+  document.getElementById('next').addEventListener('click',function(){go(i+1)});
+  document.querySelector('.tabs').addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){go(i+1);tabs[i].focus()}
+    if(e.key==='ArrowLeft'){go(i-1);tabs[i].focus()}
+  });
+})();
+</script>
+</body>
+</html>

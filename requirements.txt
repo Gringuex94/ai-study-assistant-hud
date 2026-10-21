@@ -1,0 +1,6 @@
+customtkinter
+keyboard
+mss
+pillow
+google-genai
+python-dotenv
